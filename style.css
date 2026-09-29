@@ -3656,3 +3656,221 @@ body::before {
 
     transition: width 0.08s linear;
 }
+
+/* =========================================================
+   MOBILE PERFORMANCE OPTIMIZATION
+   Animations kept - only slightly reduced for smoother mobile
+========================================================= */
+
+@media (max-width: 760px) {
+
+    /* -----------------------------------------------------
+       MOBILE BACKDROP BLUR
+       Keep glass effect, reduce GPU rendering load
+    ----------------------------------------------------- */
+
+    .navbar {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+    .welcome-card,
+    .about-card,
+    .journey-card,
+    .skill-card,
+    .project-card,
+    .contact-panel,
+    .resume-box {
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+    }
+
+    .navbar-menu {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+
+    /* -----------------------------------------------------
+       LIGHT THEME MOBILE BLUR
+    ----------------------------------------------------- */
+
+    body.light-theme .navbar {
+        backdrop-filter: blur(12px) saturate(115%);
+        -webkit-backdrop-filter: blur(12px) saturate(115%);
+    }
+
+    body.light-theme .welcome-card,
+    body.light-theme .about-card,
+    body.light-theme .journey-card,
+    body.light-theme .contact-panel,
+    body.light-theme .skill-card,
+    body.light-theme .project-card,
+    body.light-theme .resume-box {
+        backdrop-filter: blur(9px) saturate(110%);
+        -webkit-backdrop-filter: blur(9px) saturate(110%);
+    }
+
+    body.light-theme .navbar-menu {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+
+
+    /* -----------------------------------------------------
+       BACKGROUND GRID
+       Animation stays active, just slightly slower
+    ----------------------------------------------------- */
+
+    .bg-grid {
+        animation-duration: 24s;
+    }
+
+
+    /* -----------------------------------------------------
+       HERO GLOW
+       Animation stays active, movement becomes smoother
+    ----------------------------------------------------- */
+
+    .hero::before {
+        animation-duration: 12s;
+        filter: blur(12px);
+        will-change: transform, opacity;
+    }
+
+    .hero::after {
+        animation-duration: 14s;
+        filter: blur(13px);
+        will-change: transform, opacity;
+    }
+
+
+    /* -----------------------------------------------------
+       FLOATING PARTICLES
+       Animation stays active, slightly slower
+    ----------------------------------------------------- */
+
+    .hero-visual::before {
+        animation-duration: 11s;
+        will-change: transform;
+    }
+
+    .hero-visual::after {
+        animation-duration: 13s;
+        will-change: transform;
+    }
+
+
+    /* -----------------------------------------------------
+       PROFILE IMAGE
+       Keep floating animation, make it slightly slower
+    ----------------------------------------------------- */
+
+    .profile-photo {
+        animation-duration: 7s;
+        will-change: transform;
+    }
+
+    .profile-photo::before {
+        animation-duration: 15s;
+        will-change: transform;
+    }
+
+    .profile-photo::after {
+        animation-duration: 10s;
+        will-change: transform;
+    }
+
+
+    /* -----------------------------------------------------
+       JOURNEY PULSE
+       Keep pulse animation, reduce frequency slightly
+    ----------------------------------------------------- */
+
+    .journey-dot {
+        animation-duration: 3.5s;
+    }
+
+
+    /* -----------------------------------------------------
+       MOBILE MENU
+       Keep opening animation, slightly smoother
+    ----------------------------------------------------- */
+
+    .navbar-menu.active {
+        animation-duration: 0.30s;
+    }
+
+
+    /* -----------------------------------------------------
+       LIGHT THEME MOBILE
+       Avoid expensive fixed background on phones
+    ----------------------------------------------------- */
+
+    body.light-theme {
+        background-attachment: scroll;
+    }
+}
+
+
+/* =========================================================
+   EXTRA SMALL PHONES
+   Slightly lighter rendering for <= 480px
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .hero::before {
+        filter: blur(10px);
+    }
+
+    .hero::after {
+        filter: blur(11px);
+    }
+
+    .hero-visual::before,
+    .hero-visual::after {
+        opacity: 0.35;
+    }
+
+    .profile-photo {
+        animation-duration: 7.5s;
+    }
+
+    .profile-photo::before {
+        animation-duration: 16s;
+    }
+
+    .profile-photo::after {
+        animation-duration: 11s;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   <= 360px
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .hero::before {
+        filter: blur(8px);
+    }
+
+    .hero::after {
+        filter: blur(9px);
+    }
+
+    .profile-photo {
+        animation-duration: 8s;
+    }
+
+    .profile-photo::before {
+        animation-duration: 17s;
+    }
+
+    .profile-photo::after {
+        animation-duration: 12s;
+    }
+}
