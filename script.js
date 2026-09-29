@@ -112,7 +112,7 @@ function typeText() {
 
         setTimeout(
             typeText,
-            90
+            100
         );
 
     }
@@ -259,18 +259,46 @@ if (
     function animateProfile() {
 
         currentX +=
-            (mouseX - currentX) * 0.08;
+            (mouseX - currentX) * 0.06;
 
         currentY +=
-            (mouseY - currentY) * 0.08;
+            (mouseY - currentY) * 0.06;
 
         profilePhoto.style.transform =
-            `translate3d(${currentX * 0.35}px, ${currentY * 0.35}px, 0)`;
+            `translate3d(${currentX * 0.30}px, ${currentY * 0.30}px, 0)`;
+
+        const settled =
+            Math.abs(mouseX - currentX) < 0.01 &&
+            Math.abs(mouseY - currentY) < 0.01;
+
+        if (settled) {
+
+            currentX = mouseX;
+            currentY = mouseY;
+
+            profilePhoto.style.transform =
+                `translate3d(${currentX * 0.30}px, ${currentY * 0.30}px, 0)`;
+
+            animationFrame = null;
+
+            return;
+        }
 
         animationFrame =
             requestAnimationFrame(
                 animateProfile
             );
+    }
+
+
+    function startProfileAnimation() {
+
+        if (!animationFrame) {
+            animationFrame =
+                requestAnimationFrame(
+                    animateProfile
+                );
+        }
     }
 
 
@@ -297,16 +325,15 @@ if (
 
             mouseX =
                 (x - centerX) /
-                18;
+                20;
 
             mouseY =
                 (y - centerY) /
-                18;
+                20;
 
-            if (!animationFrame) {
-                animateProfile();
-            }
-        }
+            startProfileAnimation();
+        },
+        { passive: true }
     );
 
 
@@ -317,114 +344,80 @@ if (
             mouseX = 0;
             mouseY = 0;
 
-            if (!animationFrame) {
-                animateProfile();
-            }
+            startProfileAnimation();
         }
     );
 }
 
 
 // =========================================================
-// SCROLL PROGRESS
+// SCROLL PERFORMANCE
 // =========================================================
 
 let scrollTicking = false;
 
-function updateScrollProgress() {
+function updateScrollEffects() {
 
     const scrollTop =
         window.scrollY;
 
+    // Scroll progress
     const documentHeight =
         document.documentElement
             .scrollHeight -
         window.innerHeight;
 
-    if (documentHeight <= 0) {
-        return;
+    if (documentHeight > 0) {
+
+        const progress =
+            (scrollTop / documentHeight) * 100;
+
+        document.documentElement.style
+            .setProperty(
+                "--scroll-progress",
+                `${progress}%`
+            );
     }
 
-    const progress =
-        (scrollTop / documentHeight) * 100;
+    // Navbar scroll effect
+    if (navbar) {
 
-    document.documentElement.style
-        .setProperty(
-            "--scroll-progress",
-            `${progress}%`
-        );
+        if (scrollTop > 25) {
+            navbar.classList.add(
+                "scrolled"
+            );
+        } else {
+            navbar.classList.remove(
+                "scrolled"
+            );
+        }
+    }
 
     scrollTicking = false;
 }
 
-window.addEventListener(
-    "scroll",
-    () => {
+function requestScrollUpdate() {
 
-        if (!scrollTicking) {
-
-            window.requestAnimationFrame(
-                updateScrollProgress
-            );
-
-            scrollTicking = true;
-        }
-
-    },
-    {
-        passive: true
-    }
-);
-
-updateScrollProgress();
-
-
-// =========================================================
-// NAVBAR SCROLL EFFECT
-// =========================================================
-
-const navbar =
-    document.querySelector(".navbar");
-
-let navbarTicking = false;
-
-function updateNavbar() {
-
-    if (!navbar) return;
-
-    if (window.scrollY > 25) {
-        navbar.classList.add(
-            "scrolled"
-        );
-    } else {
-        navbar.classList.remove(
-            "scrolled"
-        );
+    if (scrollTicking) {
+        return;
     }
 
-    navbarTicking = false;
+    scrollTicking = true;
+
+    window.requestAnimationFrame(
+        updateScrollEffects
+    );
 }
 
 window.addEventListener(
     "scroll",
-    () => {
-
-        if (!navbarTicking) {
-
-            window.requestAnimationFrame(
-                updateNavbar
-            );
-
-            navbarTicking = true;
-        }
-
-    },
+    requestScrollUpdate,
     {
         passive: true
     }
 );
 
-updateNavbar();
+updateScrollEffects();
 
 
 // =========================================================
@@ -443,44 +436,82 @@ if (
 
     interactiveCards.forEach((card) => {
 
+        let cardFrame = null;
+        let pendingEvent = null;
+
+        function updateCardTransform() {
+
+            if (!pendingEvent) {
+                cardFrame = null;
+                return;
+            }
+
+            const event = pendingEvent;
+            pendingEvent = null;
+
+            const rect =
+                card.getBoundingClientRect();
+
+            const x =
+                event.clientX -
+                rect.left;
+
+            const y =
+                event.clientY -
+                rect.top;
+
+            const centerX =
+                rect.width / 2;
+
+            const centerY =
+                rect.height / 2;
+
+            const rotateX =
+                (y - centerY) /
+                45;
+
+            const rotateY =
+                (centerX - x) /
+                45;
+
+            card.style.transform =
+                `translateY(-4px) perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+            cardFrame = null;
+        }
+
+
         card.addEventListener(
             "mousemove",
             (event) => {
 
-                const rect =
-                    card.getBoundingClientRect();
+                pendingEvent = event;
 
-                const x =
-                    event.clientX -
-                    rect.left;
+                if (!cardFrame) {
 
-                const y =
-                    event.clientY -
-                    rect.top;
-
-                const centerX =
-                    rect.width / 2;
-
-                const centerY =
-                    rect.height / 2;
-
-                const rotateX =
-                    (y - centerY) /
-                    35;
-
-                const rotateY =
-                    (centerX - x) /
-                    35;
-
-                card.style.transform =
-                    `translateY(-5px) perspective(700px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            }
+                    cardFrame =
+                        requestAnimationFrame(
+                            updateCardTransform
+                        );
+                }
+            },
+            { passive: true }
         );
 
 
         card.addEventListener(
             "mouseleave",
             () => {
+
+                pendingEvent = null;
+
+                if (cardFrame) {
+                    cancelAnimationFrame(
+                        cardFrame
+                    );
+
+                    cardFrame = null;
+                }
 
                 card.style.transform =
                     "";
