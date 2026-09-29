@@ -91,7 +91,7 @@ Maulana Azad National Urdu University, Hyderabad
 
 Visit my portfolio to explore my skills, learning journey, and projects.
 
-**Portfolio:** https://mdjawad00.github.io/Ar_Jawad-/
+**Portfolio:** https://mdjawad00.github.io/Ar-Jawad/
 
 ---
 
